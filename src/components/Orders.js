@@ -57,7 +57,7 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
         <TableBody>
           {bestOrders.map((row) => (
             <TableRow key={row.productId}>
-              <TableCell>{row.productId}</TableCell>
+              <TableCell>{row.productName}</TableCell>
               <TableCell>{orderRow(row)}</TableCell>
             </TableRow>
           ))}

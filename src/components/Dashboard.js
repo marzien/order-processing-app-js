@@ -174,8 +174,12 @@ export default function Dashboard() {
     data.map((item) => {
       if (productObj[item.productId]) {
         productObj[item.productId].quantity += parseInt(item.quantity);
+        productObj[item.productId].productName = item.productName;
       } else {
-        productObj[item.productId] = { quantity: parseInt(item.quantity) };
+        productObj[item.productId] = {
+          quantity: parseInt(item.quantity),
+          productName: item.productName,
+        };
       }
       return 0;
     });
@@ -184,6 +188,7 @@ export default function Dashboard() {
       productSumQuantityArray.push({
         productId: item,
         quantity: productObj[item].quantity,
+        productName: productObj[item].productName,
       });
       return 0;
     });
@@ -203,10 +208,12 @@ export default function Dashboard() {
         productObj[item.productId].price = parseFloat(
           item.price.replace(/,/g, '')
         );
+        productObj[item.productId].productName = item.productName;
       } else {
         productObj[item.productId] = {
           quantity: parseInt(item.quantity),
           price: parseFloat(item.price.replace(/,/g, '')),
+          productName: item.productName,
         };
       }
       return 0;
@@ -216,6 +223,7 @@ export default function Dashboard() {
       productSumIncomeArray.push({
         productId: item,
         income: productObj[item].quantity * productObj[item].price,
+        productName: productObj[item].productName,
       });
       return 0;
     });
