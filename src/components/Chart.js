@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useTheme } from "@material-ui/core/styles";
 import {
   LineChart,
@@ -6,36 +7,18 @@ import {
   XAxis,
   YAxis,
   Label,
-  ResponsiveContainer
+  ResponsiveContainer,
+  Tooltip
 } from "recharts";
 import Title from "./Title";
-
-// Generate Sales Data
-function createData(time, amount) {
-  return { time, amount };
-}
-
-const data = [
-  createData("00:00", 0),
-  createData("03:00", 300),
-  createData("06:00", 600),
-  createData("09:00", 800),
-  createData("12:00", 1500),
-  createData("15:00", 2000),
-  createData("18:00", 2400),
-  createData("21:00", 2400),
-  createData("24:00", undefined)
-];
-
-export default function Chart() {
+export default function Chart({ chartData }) {
   const theme = useTheme();
-
-  return (
+  return(
     <React.Fragment>
-      <Title>Today</Title>
+      <Title>Total order volume by day</Title>
       <ResponsiveContainer>
         <LineChart
-          data={data}
+          data={chartData}
           margin={{
             top: 16,
             right: 16,
@@ -43,24 +26,39 @@ export default function Chart() {
             left: 24
           }}
         >
-          <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
+          <Tooltip
+            labelStyle={{ color: theme.palette.background.default }}
+            itemStyle={{ color: theme.palette.background.default }}
+            formatter={function(value, name) {
+              return `${value.toFixed(2)}€`;
+            }}
+            labelFormatter={function(value) {
+              return `Date: ${value}`;
+            }}
+          />
+          <XAxis dataKey="orderedOn" stroke={theme.palette.text.secondary} />
           <YAxis stroke={theme.palette.text.secondary}>
             <Label
               angle={270}
               position="left"
               style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
             >
-              Sales ($)
+              Income (€)
             </Label>
           </YAxis>
           <Line
             type="monotone"
-            dataKey="amount"
+            dataKey="income"
             stroke={theme.palette.primary.main}
-            dot={false}
+            dot={true}
           />
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>
   );
+}
+
+Chart.propTypes = {
+  chartData: PropTypes.array.isRequired,
+  // chartDataType: PropTypes.string.isRequired,
 }

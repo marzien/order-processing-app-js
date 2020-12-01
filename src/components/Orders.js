@@ -1,60 +1,19 @@
 import React from "react";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import { 
+  RadioGroup, 
+  FormControlLabel, 
+  Radio, 
+  FormControl,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow 
+} from '@material-ui/core';
 import Title from "./Title";
-
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(
-    0,
-    "16 Mar, 2019",
-    "Elvis Presley",
-    "Tupelo, MS",
-    "VISA ⠀•••• 3719",
-    312.44
-  ),
-  createData(
-    1,
-    "16 Mar, 2019",
-    "Paul McCartney",
-    "London, UK",
-    "VISA ⠀•••• 2574",
-    866.99
-  ),
-  createData(
-    2,
-    "16 Mar, 2019",
-    "Tom Scholz",
-    "Boston, MA",
-    "MC ⠀•••• 1253",
-    100.81
-  ),
-  createData(
-    3,
-    "16 Mar, 2019",
-    "Michael Jackson",
-    "Gary, IN",
-    "AMEX ⠀•••• 2000",
-    654.39
-  ),
-  createData(
-    4,
-    "15 Mar, 2019",
-    "Bruce Springsteen",
-    "Long Branch, NJ",
-    "VISA ⠀•••• 5919",
-    212.79
-  )
-];
+import PropTypes from "prop-types";
 
 function preventDefault(event) {
   event.preventDefault();
@@ -66,38 +25,57 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function Orders() {
+export default function Orders({ bestOrders, topChartDataType, onChange }) {
   const classes = useStyles();
+  let caption;
+
+  topChartDataType === 'byIncome' ? caption = <TableCell>Income (€)</TableCell> : caption = <TableCell>Quantity (pcs)</TableCell>
+  const orderRow = (row) => {
+    if(!!row.income) {
+      return row.income.toFixed(2);
+    } else if(!!row.quantity) { 
+      return row.quantity;
+    };
+  }
+
+  function handleChange(event) {
+    onChange(event.target.value);
+  }
+
   return (
     <React.Fragment>
-      <Title>Recent Orders</Title>
+      <Title>TOP Orders</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>Product Name</TableCell>
+            {caption}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+          {bestOrders.map(row => (
+            <TableRow key={row.productId}>
+              <TableCell>{row.productId}</TableCell>
+              <TableCell>{orderRow(row)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
       <div className={classes.seeMore}>
         <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
+        <FormControl component="fieldset">
+          <RadioGroup row aria-label="gender" name="orders" value={topChartDataType} onChange={handleChange} >
+            <FormControlLabel value="byIncome" control={<Radio />} label="By income" labelPlacement="end" />
+            <FormControlLabel value="byOrders" control={<Radio />} label="By orders" labelPlacement="end" />
+          </RadioGroup>
+        </FormControl>
         </Link>
       </div>
     </React.Fragment>
   );
+}
+
+Orders.propTypes = {
+  bestOrders: PropTypes.array.isRequired,
+  topChartDataType: PropTypes.string.isRequired
 }

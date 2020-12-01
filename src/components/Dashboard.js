@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import Box from "@material-ui/core/Box";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import Badge from "@material-ui/core/Badge";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
+import {
+  CssBaseline,
+  Drawer,
+  AppBar,
+  Toolbar,
+  List,
+  Typography,
+  Divider,
+  IconButton,
+  Container,
+  Grid,
+  Paper,
+  Link,
+  Badge,
+  Box
+} from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -24,10 +26,8 @@ import {
   deepOrange
 } from "@material-ui/core/colors";
 import Chart from "./Chart";
-import Deposits from "./Deposits";
 import Orders from "./Orders";
 
-// For Switch Theming
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 function Copyright() {
@@ -150,6 +150,102 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const [topProductByQuantityData, setTopProductByQuantity] = useState([]);
+  const [topProductByIncomeData, setTopProductByIncome] = useState([]);
+  const [topChartDataType, setChartDataType] = useState("byIncome");
+  const [orderVolumeByDayData, setOrderVolumeByDay] = useState([]);
+
+  function handleTopChartChange(newValue) {
+    setChartDataType(newValue);
+  }
+
+  useEffect(() => {
+    fetch("/api/orders.json")
+      .then((response) => response.json())
+      .then((data) => {
+        setTopProductByQuantity(calculateProductQuantity(data));
+        setTopProductByIncome(calculateProductIncome(data));
+        setOrderVolumeByDay(calculateOrderVolumeByDay(data));
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  const calculateProductQuantity = (data) => {
+    const productObj = {};
+    const productSumQuantityArray = [];
+
+    data.map((item) => {
+      if(productObj[item.productId]) {
+        productObj[item.productId].quantity += parseInt(item.quantity);
+      } else {
+        productObj[item.productId] = {quantity: parseInt(item.quantity)}
+      }
+      return 0;
+    })
+
+    Object.keys(productObj).map((item) => {
+      productSumQuantityArray.push({
+        productId: item,
+        quantity: productObj[item].quantity,
+      });
+      return 0;
+    });
+
+    return productSumQuantityArray.sort((a, b) => (a.quantity < b.quantity) ? 1 : -1).slice(0, 3);
+  }
+
+  const calculateProductIncome = (data) => {
+    const productObj = {};
+    const productSumIncomeArray = [];
+
+    data.map((item) => {
+      if(productObj[item.productId]) {
+        productObj[item.productId].quantity += parseInt(item.quantity);
+        productObj[item.productId].price = parseFloat(item.price.replace(/,/g, ''));
+      } else {
+        productObj[item.productId] = {quantity: parseInt(item.quantity), price: parseFloat(item.price.replace(/,/g, ''))}
+      }
+      return 0;
+    })
+
+    Object.keys(productObj).map((item) => {
+      productSumIncomeArray.push({
+        productId: item,
+        income: productObj[item].quantity * productObj[item].price,
+      });
+      return 0;
+    });
+
+    return productSumIncomeArray.sort((a, b) => (a.income < b.income) ? 1 : -1).slice(0, 3);
+  }
+
+
+  const calculateOrderVolumeByDay = (data) => {
+    const orderObj = {};
+    const orderVolumeByDayArray = [];
+
+    data.map((item) => {
+      //TODO add filter by 2 hierarchies and supplier
+      if(orderObj[item.orderedOn]) {
+        orderObj[item.orderedOn].quantity += parseInt(item.quantity);
+        orderObj[item.orderedOn].price = parseFloat(item.price.replace(/,/g, ''));
+      } else {
+        orderObj[item.orderedOn] = {quantity: parseInt(item.quantity), price: parseFloat(item.price.replace(/,/g, ''))}
+      }
+      return 0;
+    })
+
+    Object.keys(orderObj).map((item) => {
+      orderVolumeByDayArray.push({
+        orderedOn: item,
+        income: orderObj[item].quantity * orderObj[item].price, 
+      });
+      return 0;
+    });
+
+    return orderVolumeByDayArray.sort((a, b) => Date.parse(a.orderedOn) - Date.parse(b.orderedOn));
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={classes.root}>
@@ -208,24 +304,42 @@ export default function Dashboard() {
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper className={fixedHeightPaper}>
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper className={fixedHeightPaper}>
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
+              {/* 3 top products table */}
+              <Grid item xs={12} md={6}>
                 <Paper className={classes.paper}>
-                  <Orders />
+                  <Orders 
+                    topChartDataType={topChartDataType}
+                    onChange={handleTopChartChange}
+                    bestOrders={
+                    topChartDataType === 'byIncome' 
+                      ? topProductByIncomeData 
+                      : topProductByQuantityData} />
                 </Paper>
               </Grid>
+             {/* List of deliveries */}
+              <Grid item xs={12} md={6}>
+                <Paper className={classes.paper}>
+                  <Orders 
+                   topChartDataType={topChartDataType}
+                   bestOrders={
+                   topChartDataType === 'byIncome' 
+                     ? topProductByIncomeData 
+                     : topProductByQuantityData} />
+                </Paper>
+              </Grid>
+              {/* Order value by day chart */}
+              <Grid item xs={12}>
+                <Paper className={fixedHeightPaper}>
+                  <Chart chartData={ orderVolumeByDayData }/>
+                </Paper>
+              </Grid>
+              {/* Suppliers rank chart */}
+              <Grid item xs={12}>
+                <Paper className={fixedHeightPaper}>
+                  <Chart chartData={ orderVolumeByDayData }/>
+                </Paper>
+              </Grid>
+
             </Grid>
             <Box pt={4}>
               <Copyright />
