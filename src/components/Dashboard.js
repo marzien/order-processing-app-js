@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   CssBaseline,
   Drawer,
@@ -15,130 +15,127 @@ import {
   Paper,
   Link,
   Badge,
-  Box
-} from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import { mainListItems, secondaryListItems } from "./listItems";
-import {
-  lightBlue,
-  deepOrange
-} from "@material-ui/core/colors";
-import Chart from "./Chart";
-import Orders from "./Orders";
+  Box,
+} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import { mainListItems, secondaryListItems } from './listItems';
+import { lightBlue, deepOrange } from '@material-ui/core/colors';
+import Chart from './Chart';
+import Orders from './Orders';
 
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
+      {'Copyright © '}
       <Link color="inherit" href="https://material-ui.com/">
         Material UI
-      </Link>{" "}
+      </Link>{' '}
       {new Date().getFullYear()}
-      {"."}
+      {'.'}
     </Typography>
   );
 }
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: 'flex',
   },
   toolbar: {
-    paddingRight: 24 // keep right padding when drawer closed
+    paddingRight: 24, // keep right padding when drawer closed
   },
   toolbarIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: "0 8px",
-    ...theme.mixins.toolbar
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   appBarShift: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   menuButton: {
-    marginRight: 36
+    marginRight: 36,
   },
   menuButtonHidden: {
-    display: "none"
+    display: 'none',
   },
   title: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   drawerPaper: {
-    position: "relative",
-    whiteSpace: "nowrap",
+    position: 'relative',
+    whiteSpace: 'nowrap',
     width: drawerWidth,
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   drawerPaperClose: {
-    overflowX: "hidden",
-    transition: theme.transitions.create("width", {
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
+      duration: theme.transitions.duration.leavingScreen,
     }),
     width: theme.spacing(7),
-    [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9)
-    }
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(9),
+    },
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    height: "100vh",
-    overflow: "auto"
+    height: '100vh',
+    overflow: 'auto',
   },
   container: {
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
   },
   paper: {
     padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column"
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
   },
   fixedHeight: {
-    height: 240
-  }
+    height: 240,
+  },
 }));
 
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
-  const palletType = "dark";
+  const palletType = 'dark';
   const mainPrimaryColor = lightBlue[300];
   const mainSecondaryColor = deepOrange[900];
   const darkTheme = createMuiTheme({
     palette: {
       type: palletType,
       primary: {
-        main: mainPrimaryColor
+        main: mainPrimaryColor,
       },
       secondary: {
-        main: mainSecondaryColor
-      }
-    }
+        main: mainSecondaryColor,
+      },
+    },
   });
   const classes = useStyles();
 
@@ -152,7 +149,7 @@ export default function Dashboard() {
 
   const [topProductByQuantityData, setTopProductByQuantity] = useState([]);
   const [topProductByIncomeData, setTopProductByIncome] = useState([]);
-  const [topChartDataType, setChartDataType] = useState("byIncome");
+  const [topChartDataType, setChartDataType] = useState('byIncome');
   const [orderVolumeByDayData, setOrderVolumeByDay] = useState([]);
 
   function handleTopChartChange(newValue) {
@@ -160,7 +157,7 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    fetch("/api/orders.json")
+    fetch('/api/orders.json')
       .then((response) => response.json())
       .then((data) => {
         setTopProductByQuantity(calculateProductQuantity(data));
@@ -175,13 +172,13 @@ export default function Dashboard() {
     const productSumQuantityArray = [];
 
     data.map((item) => {
-      if(productObj[item.productId]) {
+      if (productObj[item.productId]) {
         productObj[item.productId].quantity += parseInt(item.quantity);
       } else {
-        productObj[item.productId] = {quantity: parseInt(item.quantity)}
+        productObj[item.productId] = { quantity: parseInt(item.quantity) };
       }
       return 0;
-    })
+    });
 
     Object.keys(productObj).map((item) => {
       productSumQuantityArray.push({
@@ -191,22 +188,29 @@ export default function Dashboard() {
       return 0;
     });
 
-    return productSumQuantityArray.sort((a, b) => (a.quantity < b.quantity) ? 1 : -1).slice(0, 3);
-  }
+    return productSumQuantityArray
+      .sort((a, b) => (a.quantity < b.quantity ? 1 : -1))
+      .slice(0, 3);
+  };
 
   const calculateProductIncome = (data) => {
     const productObj = {};
     const productSumIncomeArray = [];
 
     data.map((item) => {
-      if(productObj[item.productId]) {
+      if (productObj[item.productId]) {
         productObj[item.productId].quantity += parseInt(item.quantity);
-        productObj[item.productId].price = parseFloat(item.price.replace(/,/g, ''));
+        productObj[item.productId].price = parseFloat(
+          item.price.replace(/,/g, '')
+        );
       } else {
-        productObj[item.productId] = {quantity: parseInt(item.quantity), price: parseFloat(item.price.replace(/,/g, ''))}
+        productObj[item.productId] = {
+          quantity: parseInt(item.quantity),
+          price: parseFloat(item.price.replace(/,/g, '')),
+        };
       }
       return 0;
-    })
+    });
 
     Object.keys(productObj).map((item) => {
       productSumIncomeArray.push({
@@ -216,9 +220,10 @@ export default function Dashboard() {
       return 0;
     });
 
-    return productSumIncomeArray.sort((a, b) => (a.income < b.income) ? 1 : -1).slice(0, 3);
-  }
-
+    return productSumIncomeArray
+      .sort((a, b) => (a.income < b.income ? 1 : -1))
+      .slice(0, 3);
+  };
 
   const calculateOrderVolumeByDay = (data) => {
     const orderObj = {};
@@ -226,25 +231,32 @@ export default function Dashboard() {
 
     data.map((item) => {
       //TODO add filter by 2 hierarchies and supplier
-      if(orderObj[item.orderedOn]) {
+      if (orderObj[item.orderedOn]) {
         orderObj[item.orderedOn].quantity += parseInt(item.quantity);
-        orderObj[item.orderedOn].price = parseFloat(item.price.replace(/,/g, ''));
+        orderObj[item.orderedOn].price = parseFloat(
+          item.price.replace(/,/g, '')
+        );
       } else {
-        orderObj[item.orderedOn] = {quantity: parseInt(item.quantity), price: parseFloat(item.price.replace(/,/g, ''))}
+        orderObj[item.orderedOn] = {
+          quantity: parseInt(item.quantity),
+          price: parseFloat(item.price.replace(/,/g, '')),
+        };
       }
       return 0;
-    })
+    });
 
     Object.keys(orderObj).map((item) => {
       orderVolumeByDayArray.push({
         orderedOn: item,
-        income: orderObj[item].quantity * orderObj[item].price, 
+        income: orderObj[item].quantity * orderObj[item].price,
       });
       return 0;
     });
 
-    return orderVolumeByDayArray.sort((a, b) => Date.parse(a.orderedOn) - Date.parse(b.orderedOn));
-  }
+    return orderVolumeByDayArray.sort(
+      (a, b) => Date.parse(a.orderedOn) - Date.parse(b.orderedOn)
+    );
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -286,7 +298,7 @@ export default function Dashboard() {
         <Drawer
           variant="permanent"
           classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
           }}
           open={open}
         >
@@ -307,39 +319,42 @@ export default function Dashboard() {
               {/* 3 top products table */}
               <Grid item xs={12} md={6}>
                 <Paper className={classes.paper}>
-                  <Orders 
+                  <Orders
                     topChartDataType={topChartDataType}
                     onChange={handleTopChartChange}
                     bestOrders={
-                    topChartDataType === 'byIncome' 
-                      ? topProductByIncomeData 
-                      : topProductByQuantityData} />
+                      topChartDataType === 'byIncome'
+                        ? topProductByIncomeData
+                        : topProductByQuantityData
+                    }
+                  />
                 </Paper>
               </Grid>
-             {/* List of deliveries */}
+              {/* List of deliveries */}
               <Grid item xs={12} md={6}>
                 <Paper className={classes.paper}>
-                  <Orders 
-                   topChartDataType={topChartDataType}
-                   bestOrders={
-                   topChartDataType === 'byIncome' 
-                     ? topProductByIncomeData 
-                     : topProductByQuantityData} />
+                  <Orders
+                    topChartDataType={topChartDataType}
+                    bestOrders={
+                      topChartDataType === 'byIncome'
+                        ? topProductByIncomeData
+                        : topProductByQuantityData
+                    }
+                  />
                 </Paper>
               </Grid>
               {/* Order value by day chart */}
               <Grid item xs={12}>
                 <Paper className={fixedHeightPaper}>
-                  <Chart chartData={ orderVolumeByDayData }/>
+                  <Chart chartData={orderVolumeByDayData} />
                 </Paper>
               </Grid>
               {/* Suppliers rank chart */}
               <Grid item xs={12}>
                 <Paper className={fixedHeightPaper}>
-                  <Chart chartData={ orderVolumeByDayData }/>
+                  <Chart chartData={orderVolumeByDayData} />
                 </Paper>
               </Grid>
-
             </Grid>
             <Box pt={4}>
               <Copyright />

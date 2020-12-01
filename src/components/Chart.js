@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useTheme } from "@material-ui/core/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useTheme } from '@material-ui/core/styles';
 import {
   LineChart,
   Line,
@@ -8,12 +8,12 @@ import {
   YAxis,
   Label,
   ResponsiveContainer,
-  Tooltip
-} from "recharts";
-import Title from "./Title";
+  Tooltip,
+} from 'recharts';
+import Title from './Title';
 export default function Chart({ chartData }) {
   const theme = useTheme();
-  return(
+  return (
     <React.Fragment>
       <Title>Total order volume by day</Title>
       <ResponsiveContainer>
@@ -23,16 +23,16 @@ export default function Chart({ chartData }) {
             top: 16,
             right: 16,
             bottom: 0,
-            left: 24
+            left: 24,
           }}
         >
           <Tooltip
             labelStyle={{ color: theme.palette.background.default }}
             itemStyle={{ color: theme.palette.background.default }}
-            formatter={function(value, name) {
+            formatter={function (value, name) {
               return `${value.toFixed(2)}€`;
             }}
-            labelFormatter={function(value) {
+            labelFormatter={function (value) {
               return `Date: ${value}`;
             }}
           />
@@ -41,7 +41,7 @@ export default function Chart({ chartData }) {
             <Label
               angle={270}
               position="left"
-              style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
+              style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
             >
               Income (€)
             </Label>
@@ -61,4 +61,4 @@ export default function Chart({ chartData }) {
 Chart.propTypes = {
   chartData: PropTypes.array.isRequired,
   // chartDataType: PropTypes.string.isRequired,
-}
+};
