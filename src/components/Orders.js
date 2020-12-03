@@ -20,8 +20,11 @@ function preventDefault(event) {
 }
 
 const useStyles = makeStyles((theme) => ({
-  seeMore: {
-    marginTop: theme.spacing(3),
+  fullTitle: {
+    flexDirection: 'row',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -46,7 +49,35 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
 
   return (
     <React.Fragment>
-      <Title>TOP Orders</Title>
+      <div className={classes.fullTitle}>
+        <Title>TOP Orders</Title>
+        <div>
+          <Link color="primary" href="#" onClick={preventDefault}>
+            <FormControl component="fieldset">
+              <RadioGroup
+                row
+                aria-label="orders"
+                name="orders"
+                value={topChartDataType}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="byIncome"
+                  control={<Radio />}
+                  label="By income"
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="byOrders"
+                  control={<Radio />}
+                  label="By orders"
+                  labelPlacement="end"
+                />
+              </RadioGroup>
+            </FormControl>
+          </Link>
+        </div>
+      </div>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -63,32 +94,6 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
           ))}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          <FormControl component="fieldset">
-            <RadioGroup
-              row
-              aria-label="orders"
-              name="orders"
-              value={topChartDataType}
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="byIncome"
-                control={<Radio />}
-                label="By income"
-                labelPlacement="end"
-              />
-              <FormControlLabel
-                value="byOrders"
-                control={<Radio />}
-                label="By orders"
-                labelPlacement="end"
-              />
-            </RadioGroup>
-          </FormControl>
-        </Link>
-      </div>
     </React.Fragment>
   );
 }

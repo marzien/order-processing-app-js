@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 240,
+    height: 270,
   },
 }));
 
@@ -302,7 +302,6 @@ export default function Dashboard() {
       return 0;
     });
 
-    console.log('suppliersRankArray', suppliersRankArray);
     return suppliersRankArray;
   };
 
@@ -366,7 +365,7 @@ export default function Dashboard() {
             <Grid container spacing={3}>
               {/* 3 top products table */}
               <Grid item xs={12} md={6}>
-                <Paper className={classes.paper}>
+                <Paper className={fixedHeightPaper}>
                   <Orders
                     topChartDataType={topChartDataType}
                     onChange={handleTopChartChange}
@@ -380,8 +379,8 @@ export default function Dashboard() {
               </Grid>
               {/* List of deliveries */}
               <Grid item xs={12} md={6}>
-                <Paper className={classes.paper}>
-                  <SuppliersRank suppliersData={rankSuppliersData} />
+                <Paper className={fixedHeightPaper}>
+                  <RankChart chartData={rankSuppliersData} />
                 </Paper>
               </Grid>
               {/* Order value by day chart */}
@@ -392,8 +391,8 @@ export default function Dashboard() {
               </Grid>
               {/* Suppliers rank chart */}
               <Grid item xs={12}>
-                <Paper className={fixedHeightPaper}>
-                  <RankChart chartData={rankSuppliersData} />
+                <Paper className={classes.paper}>
+                  <SuppliersRank suppliersData={rankSuppliersData} />
                 </Paper>
               </Grid>
             </Grid>
