@@ -25,6 +25,7 @@ import { lightBlue, deepOrange } from '@material-ui/core/colors';
 import Chart from './Chart';
 import Orders from './Orders';
 import SuppliersRank from './SuppliersRank';
+import RankChart from './RankChart';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -392,7 +393,7 @@ export default function Dashboard() {
               {/* Suppliers rank chart */}
               <Grid item xs={12}>
                 <Paper className={fixedHeightPaper}>
-                  <Chart chartData={orderVolumeByDayData} />
+                  <RankChart chartData={rankSuppliersData} />
                 </Paper>
               </Grid>
             </Grid>

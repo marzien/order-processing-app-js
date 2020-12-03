@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   RadioGroup,
   FormControlLabel,
@@ -11,6 +9,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Link,
+  makeStyles,
 } from '@material-ui/core';
 import Title from './Title';
 import PropTypes from 'prop-types';
