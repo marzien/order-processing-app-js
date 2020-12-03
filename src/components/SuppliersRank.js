@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -25,40 +25,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Orders({ bestOrders, topChartDataType, onChange }) {
+export default function SuppliersRank({ suppliersData }) {
+  const [byValue, setTableType] = useState(false);
   const classes = useStyles();
   let caption;
 
-  topChartDataType === 'byIncome'
-    ? (caption = <TableCell>Income (€)</TableCell>)
-    : (caption = <TableCell>Quantity (pcs)</TableCell>);
-  const orderRow = (row) => {
-    if (!!row.income) {
-      return row.income.toFixed(2);
-    } else if (!!row.quantity) {
+  byValue
+    ? (caption = <TableCell>Quantity (pcs)</TableCell>)
+    : (caption = <TableCell>Value (€)</TableCell>);
+
+  const supplierRow = (row) => {
+    if (byValue) {
       return row.quantity;
+    } else {
+      return row.purchasingVolume.toFixed(2);
     }
   };
 
-  function handleChange(event) {
-    onChange(event.target.value);
-  }
-
   return (
     <React.Fragment>
-      <Title>TOP Orders</Title>
+      <Title>Suppliers rank</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Product Name</TableCell>
+            <TableCell>Supplier</TableCell>
             {caption}
           </TableRow>
         </TableHead>
         <TableBody>
-          {bestOrders.map((row) => (
-            <TableRow key={row.productId}>
-              <TableCell>{row.productName}</TableCell>
-              <TableCell>{orderRow(row)}</TableCell>
+          {suppliersData.map((row) => (
+            <TableRow key={row.supplier}>
+              <TableCell>{row.supplier}</TableCell>
+              <TableCell>{supplierRow(row)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -68,21 +66,21 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
           <FormControl component="fieldset">
             <RadioGroup
               row
-              aria-label="orders"
-              name="orders"
-              value={topChartDataType}
-              onChange={handleChange}
+              aria-label="suppliers"
+              name="suppliers"
+              value={byValue}
+              onChange={(event) => setTableType(event.target.value === 'true')}
             >
               <FormControlLabel
-                value="byIncome"
+                value={false}
                 control={<Radio />}
-                label="By income"
+                label="By value"
                 labelPlacement="end"
               />
               <FormControlLabel
-                value="byOrders"
+                value={true}
                 control={<Radio />}
-                label="By orders"
+                label="By quantity"
                 labelPlacement="end"
               />
             </RadioGroup>
@@ -93,8 +91,6 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
   );
 }
 
-Orders.propTypes = {
-  bestOrders: PropTypes.array.isRequired,
-  topChartDataType: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+SuppliersRank.propTypes = {
+  suppliersData: PropTypes.any.isRequired,
 };

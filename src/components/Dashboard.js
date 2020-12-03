@@ -24,6 +24,7 @@ import { mainListItems, secondaryListItems } from './listItems';
 import { lightBlue, deepOrange } from '@material-ui/core/colors';
 import Chart from './Chart';
 import Orders from './Orders';
+import SuppliersRank from './SuppliersRank';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -151,6 +152,7 @@ export default function Dashboard() {
   const [topProductByIncomeData, setTopProductByIncome] = useState([]);
   const [topChartDataType, setChartDataType] = useState('byIncome');
   const [orderVolumeByDayData, setOrderVolumeByDay] = useState([]);
+  const [rankSuppliersData, setSuppliersRank] = useState([]);
 
   function handleTopChartChange(newValue) {
     setChartDataType(newValue);
@@ -163,6 +165,7 @@ export default function Dashboard() {
         setTopProductByQuantity(calculateProductQuantity(data));
         setTopProductByIncome(calculateProductIncome(data));
         setOrderVolumeByDay(calculateOrderVolumeByDay(data));
+        setSuppliersRank(calculateSuppliersRank(data));
       })
       .catch((error) => console.log(error));
   }, []);
@@ -266,6 +269,42 @@ export default function Dashboard() {
     );
   };
 
+  const calculateSuppliersRank = (data) => {
+    const supplierObj = {};
+    const suppliersRankArray = [];
+
+    data.map((item) => {
+      let purchasingVolume =
+        parseInt(item.quantity) * parseFloat(item.price.replace(/,/g, ''));
+      if (supplierObj[item.supplier]) {
+        supplierObj[item.supplier].price = parseFloat(
+          item.price.replace(/,/g, '')
+        );
+        supplierObj[item.supplier].supplierQuantity += parseInt(item.quantity);
+        supplierObj[item.supplier].purchasesVolume += purchasingVolume;
+      } else {
+        supplierObj[item.supplier] = {
+          price: parseFloat(item.price.replace(/,/g, '')),
+          supplierQuantity: parseInt(item.quantity),
+          purchasesVolume: purchasingVolume,
+        };
+      }
+      return 0;
+    });
+
+    Object.keys(supplierObj).map((item) => {
+      suppliersRankArray.push({
+        supplier: item,
+        quantity: supplierObj[item].supplierQuantity,
+        purchasingVolume: supplierObj[item].purchasesVolume,
+      });
+      return 0;
+    });
+
+    console.log('suppliersRankArray', suppliersRankArray);
+    return suppliersRankArray;
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={classes.root}>
@@ -341,14 +380,7 @@ export default function Dashboard() {
               {/* List of deliveries */}
               <Grid item xs={12} md={6}>
                 <Paper className={classes.paper}>
-                  <Orders
-                    topChartDataType={topChartDataType}
-                    bestOrders={
-                      topChartDataType === 'byIncome'
-                        ? topProductByIncomeData
-                        : topProductByQuantityData
-                    }
-                  />
+                  <SuppliersRank suppliersData={rankSuppliersData} />
                 </Paper>
               </Grid>
               {/* Order value by day chart */}
