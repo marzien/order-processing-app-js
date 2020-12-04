@@ -28,7 +28,10 @@ import Orders from './Orders';
 import Deliveries from './Deliveries';
 import RankChart from './RankChart';
 
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {
+  unstable_createMuiStrictModeTheme as createMuiTheme,
+  ThemeProvider,
+} from '@material-ui/core/styles';
 
 function Copyright() {
   return (
