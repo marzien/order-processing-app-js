@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   CssBaseline,
@@ -24,7 +25,7 @@ import { mainListItems, secondaryListItems } from './listItems';
 import { lightBlue, deepOrange } from '@material-ui/core/colors';
 import Chart from './Chart';
 import Orders from './Orders';
-import SuppliersRank from './SuppliersRank';
+import Deliveries from './Deliveries';
 import RankChart from './RankChart';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -43,6 +44,7 @@ function Copyright() {
 }
 
 const drawerWidth = 240;
+const dateFormat = 'DD/MM/YYYY';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -154,6 +156,7 @@ export default function Dashboard() {
   const [topChartDataType, setChartDataType] = useState('byIncome');
   const [orderVolumeByDayData, setOrderVolumeByDay] = useState([]);
   const [rankSuppliersData, setSuppliersRank] = useState([]);
+  const [deliveriesData, setDeliveries] = useState([]);
 
   function handleTopChartChange(newValue) {
     setChartDataType(newValue);
@@ -167,6 +170,7 @@ export default function Dashboard() {
         setTopProductByIncome(calculateProductIncome(data));
         setOrderVolumeByDay(calculateOrderVolumeByDay(data));
         setSuppliersRank(calculateSuppliersRank(data));
+        setDeliveries(calculateDeliveries(data));
       })
       .catch((error) => console.log(error));
   }, []);
@@ -265,8 +269,10 @@ export default function Dashboard() {
       return 0;
     });
 
-    return orderVolumeByDayArray.sort(
-      (a, b) => Date.parse(a.orderedOn) - Date.parse(b.orderedOn)
+    return orderVolumeByDayArray.sort((d1, d2) =>
+      moment(d1.orderedOn, dateFormat) > moment(d2.orderedOn, dateFormat)
+        ? 1
+        : -1
     );
   };
 
@@ -303,6 +309,27 @@ export default function Dashboard() {
     });
 
     return suppliersRankArray;
+  };
+
+  const calculateDeliveries = (data) => {
+    // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/46431916#46431916
+    //TODO refactoring for all widgets
+    data = data.sort((d1, d2) =>
+      moment(d1.deliveryDate, dateFormat) < moment(d2.deliveryDate, dateFormat)
+        ? 1
+        : -1
+    );
+
+    const groupedMap = data.reduce(
+      (entryMap, e) =>
+        entryMap.set(e.deliveryDate, [
+          ...(entryMap.get(e.deliveryDate) || []),
+          e,
+        ]),
+      new Map()
+    );
+
+    return Array.from(groupedMap.entries());
   };
 
   return (
@@ -377,7 +404,7 @@ export default function Dashboard() {
                   />
                 </Paper>
               </Grid>
-              {/* List of deliveries */}
+              {/* Suppliers rank chart */}
               <Grid item xs={12} md={6}>
                 <Paper className={fixedHeightPaper}>
                   <RankChart chartData={rankSuppliersData} />
@@ -389,10 +416,10 @@ export default function Dashboard() {
                   <Chart chartData={orderVolumeByDayData} />
                 </Paper>
               </Grid>
-              {/* Suppliers rank chart */}
+              {/* List of deliveries */}
               <Grid item xs={12}>
                 <Paper className={classes.paper}>
-                  <SuppliersRank suppliersData={rankSuppliersData} />
+                  <Deliveries deliveriesData={deliveriesData} />
                 </Paper>
               </Grid>
             </Grid>
