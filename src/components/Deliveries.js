@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Link,
   makeStyles,
   IconButton,
   TableContainer,
@@ -17,6 +16,7 @@ import Title from './Title';
 import PropTypes from 'prop-types';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Loader from './Loader';
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -93,7 +93,7 @@ Row.propTypes = {
 export default function Deliveries({ deliveriesData }) {
   const classes = useStyles();
 
-  return (
+  return deliveriesData.length > 0 ? (
     <React.Fragment>
       <Title className={classes.seeMore}>Deliveries by day</Title>
       <TableContainer component={Paper}>
@@ -106,6 +106,8 @@ export default function Deliveries({ deliveriesData }) {
         </Table>
       </TableContainer>
     </React.Fragment>
+  ) : (
+    <Loader />
   );
 }
 

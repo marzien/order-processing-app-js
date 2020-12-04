@@ -11,9 +11,10 @@ import {
   Tooltip,
 } from 'recharts';
 import Title from './Title';
+import Loader from './Loader';
 export default function Chart({ chartData }) {
   const theme = useTheme();
-  return (
+  return chartData.length > 0 ? (
     <React.Fragment>
       <Title>Total order volume by day</Title>
       <ResponsiveContainer>
@@ -55,10 +56,11 @@ export default function Chart({ chartData }) {
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>
+  ) : (
+    <Loader />
   );
 }
 
 Chart.propTypes = {
   chartData: PropTypes.array.isRequired,
-  // chartDataType: PropTypes.string.isRequired,
 };

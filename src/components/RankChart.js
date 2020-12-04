@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@material-ui/core/styles';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Label,
@@ -21,6 +19,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import Title from './Title';
+import Loader from './Loader';
 
 function preventDefault(event) {
   event.preventDefault();
@@ -49,7 +48,7 @@ export default function RankChart({ chartData }) {
     barValue = 'purchasingVolume';
   }
 
-  return (
+  return chartData.length > 0 ? (
     <React.Fragment>
       <div className={classes.fullTitle}>
         <Title>Suppliers rank</Title>
@@ -122,6 +121,8 @@ export default function RankChart({ chartData }) {
         </BarChart>
       </ResponsiveContainer>
     </React.Fragment>
+  ) : (
+    <Loader />
   );
 }
 

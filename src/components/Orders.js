@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import Title from './Title';
 import PropTypes from 'prop-types';
+import Loader from './Loader';
 
 function preventDefault(event) {
   event.preventDefault();
@@ -47,7 +48,7 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
     onChange(event.target.value);
   }
 
-  return (
+  return bestOrders.length > 0 ? (
     <React.Fragment>
       <div className={classes.fullTitle}>
         <Title>TOP Orders</Title>
@@ -95,6 +96,8 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
         </TableBody>
       </Table>
     </React.Fragment>
+  ) : (
+    <Loader />
   );
 }
 
