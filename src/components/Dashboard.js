@@ -158,11 +158,17 @@ export default function Dashboard() {
   const [topProductByIncomeData, setTopProductByIncome] = useState([]);
   const [topChartDataType, setChartDataType] = useState('byIncome');
   const [orderVolumeByDayData, setOrderVolumeByDay] = useState([]);
+  const [filterValues, setFilterValues] = useState([]);
+  const [filterType, setFilterOptions] = useState([]);
   const [rankSuppliersData, setSuppliersRank] = useState([]);
   const [deliveriesData, setDeliveries] = useState([]);
 
   function handleTopChartChange(newValue) {
     setChartDataType(newValue);
+  }
+
+  function handleFilterChange(newValue) {
+    setFilterOptions(newValue);
   }
 
   useEffect(() => {
@@ -172,6 +178,7 @@ export default function Dashboard() {
         setTopProductByQuantity(calculateProductQuantity(data));
         setTopProductByIncome(calculateProductIncome(data));
         setOrderVolumeByDay(calculateOrderVolumeByDay(data));
+        setFilterValues(calculateFilterValues(data));
         setSuppliersRank(calculateSuppliersRank(data));
         setDeliveries(calculateDeliveries(data));
       })
@@ -248,8 +255,26 @@ export default function Dashboard() {
     const orderObj = {};
     const orderVolumeByDayArray = [];
 
+    // TODO track for filter values changes and rerender chart
+    function filter(arr, criteria) {
+      return arr.filter(function (obj) {
+        return Object.keys(criteria).every(function (c) {
+          if (!isNaN(parseFloat(obj[c])) && isFinite(obj[c])) {
+            return obj[c] == criteria[c];
+          } else {
+            return new RegExp('' + criteria[c] + '', 'i').test(obj[c]);
+          }
+        });
+      });
+    }
+
+    data = filter(data, {
+      productCategory1: '',
+      productCategory2: '',
+      supplier: '',
+    });
+
     data.map((item) => {
-      //TODO add filter by 2 hierarchies and supplier
       if (orderObj[item.orderedOn]) {
         orderObj[item.orderedOn].quantity += parseInt(item.quantity);
         orderObj[item.orderedOn].price = parseFloat(
@@ -277,6 +302,14 @@ export default function Dashboard() {
         ? 1
         : -1
     );
+  };
+
+  const calculateFilterValues = (data) => {
+    return [
+      [...new Set(data.map((order) => order.productCategory1))],
+      [...new Set(data.map((order) => order.productCategory2))],
+      [...new Set(data.map((order) => order.supplier))],
+    ];
   };
 
   const calculateSuppliersRank = (data) => {
@@ -315,8 +348,6 @@ export default function Dashboard() {
   };
 
   const calculateDeliveries = (data) => {
-    // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/46431916#46431916
-    //TODO refactoring for all widgets
     data = data.sort((d1, d2) =>
       moment(d1.deliveryDate, dateFormat) < moment(d2.deliveryDate, dateFormat)
         ? 1
@@ -415,8 +446,14 @@ export default function Dashboard() {
               </Grid>
               {/* Order value by day chart */}
               <Grid item xs={12}>
+                {filterType.length > 0 &&
+                  `Filtering by: ${filterType} not working`}
                 <Paper className={fixedHeightPaper}>
-                  <Chart chartData={orderVolumeByDayData} />
+                  <Chart
+                    chartData={orderVolumeByDayData}
+                    filterValues={filterValues}
+                    filterChange={handleFilterChange}
+                  />
                 </Paper>
               </Grid>
               {/* List of deliveries */}

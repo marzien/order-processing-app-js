@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useTheme } from '@material-ui/core/styles';
+import {
+  useTheme,
+  FormControl,
+  Select,
+  makeStyles,
+  MenuItem,
+  withStyles,
+  InputBase,
+} from '@material-ui/core';
 import {
   LineChart,
   Line,
@@ -12,11 +20,146 @@ import {
 } from 'recharts';
 import Title from './Title';
 import Loader from './Loader';
-export default function Chart({ chartData }) {
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid #ced4da',
+    fontSize: 16,
+    padding: '10px 26px 10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      borderRadius: 4,
+      borderColor: '#80bdff',
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}))(InputBase);
+
+const useStyles = makeStyles((theme) => ({
+  margin: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  fullTitle: {
+    flexDirection: 'row',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+}));
+export default function Chart({ chartData, filterValues, filterChange }) {
   const theme = useTheme();
-  return chartData.length > 0 ? (
+  const classes = useStyles();
+
+  const [category1, setCategory1] = React.useState('');
+  const [category2, setCategory2] = React.useState('');
+  const [supplier, setSupplier] = React.useState('');
+  const didMountRef = useRef(false);
+
+  const handleCat1Change = (event) => {
+    setCategory1(event.target.value);
+    didMountRef.current = true;
+  };
+  const handleCat2Change = (event) => {
+    setCategory2(event.target.value);
+    didMountRef.current = true;
+  };
+  const handleSupplierChange = (event) => {
+    setSupplier(event.target.value);
+    didMountRef.current = true;
+  };
+
+  useEffect(() => {
+    if (didMountRef.current) {
+      filterChange(
+        [category1, category2, supplier].filter((cat) => cat !== '')
+      );
+      didMountRef.current = false;
+    } else didMountRef.current = true;
+  });
+
+  return chartData.length > 0 && filterValues.length > 0 ? (
     <React.Fragment>
-      <Title>Total order volume by day</Title>
+      <div className={classes.fullTitle}>
+        <Title>Total order volume by day</Title>
+        <div>
+          <FormControl className={classes.margin}>
+            <Select
+              labelId="category1-label"
+              id="category1-select"
+              value={category1}
+              onChange={handleCat1Change}
+              input={<BootstrapInput />}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {filterValues[0].map((filterItem, i) => (
+                <MenuItem key={i} value={filterItem}>
+                  {filterItem}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl className={classes.margin}>
+            <Select
+              labelId="category2-label"
+              id="category2-select"
+              value={category2}
+              onChange={handleCat2Change}
+              input={<BootstrapInput />}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {filterValues[1].map((filterItem, i) => (
+                <MenuItem key={i} value={filterItem}>
+                  {filterItem}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl className={classes.margin}>
+            <Select
+              labelId="supplier-label"
+              id="supplier-select"
+              value={supplier}
+              onChange={handleSupplierChange}
+              input={<BootstrapInput />}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {filterValues[2].map((filterItem, i) => (
+                <MenuItem key={i} value={filterItem}>
+                  {filterItem}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+      </div>
+
       <ResponsiveContainer>
         <LineChart
           data={chartData}
@@ -63,4 +206,6 @@ export default function Chart({ chartData }) {
 
 Chart.propTypes = {
   chartData: PropTypes.array.isRequired,
+  filterValues: PropTypes.array.isRequired,
+  filterChange: PropTypes.func.isRequired,
 };
