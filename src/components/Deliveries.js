@@ -47,7 +47,8 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {deliveriesByDate[0]}
+          {deliveriesByDate[0]} with {deliveriesByDate[1].length}{' '}
+          {deliveriesByDate[1].length > 1 ? 'deliveries' : 'delivery'}
         </TableCell>
       </TableRow>
       <TableRow>
