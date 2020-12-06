@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import Title from './Title';
 import PropTypes from 'prop-types';
-import Loader from './Loader';
+import Spinner from './Spinner';
 
 function preventDefault(event) {
   event.preventDefault();
@@ -49,7 +49,7 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
   }
 
   return bestOrders.length > 0 ? (
-    <React.Fragment>
+    <Fragment>
       <div className={classes.fullTitle}>
         <Title>TOP Orders</Title>
         <div>
@@ -95,9 +95,9 @@ export default function Orders({ bestOrders, topChartDataType, onChange }) {
           ))}
         </TableBody>
       </Table>
-    </React.Fragment>
+    </Fragment>
   ) : (
-    <Loader />
+    <Spinner />
   );
 }
 

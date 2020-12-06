@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@material-ui/core/styles';
 import {
@@ -19,7 +19,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import Title from './Title';
-import Loader from './Loader';
+import Spinner from './Spinner';
 
 function preventDefault(event) {
   event.preventDefault();
@@ -49,7 +49,7 @@ export default function RankChart({ chartData }) {
   }
 
   return chartData.length > 0 ? (
-    <React.Fragment>
+    <Fragment>
       <div className={classes.fullTitle}>
         <Title>Suppliers rank</Title>
         <div>
@@ -120,9 +120,9 @@ export default function RankChart({ chartData }) {
           />
         </BarChart>
       </ResponsiveContainer>
-    </React.Fragment>
+    </Fragment>
   ) : (
-    <Loader />
+    <Spinner />
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useState, Fragment, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   useTheme,
@@ -19,7 +19,7 @@ import {
   Tooltip,
 } from 'recharts';
 import Title from './Title';
-import Loader from './Loader';
+import Spinner from './Spinner';
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -71,9 +71,9 @@ export default function Chart({ chartData, filterValues, filterChange }) {
   const theme = useTheme();
   const classes = useStyles();
 
-  const [category1, setCategory1] = React.useState('');
-  const [category2, setCategory2] = React.useState('');
-  const [supplier, setSupplier] = React.useState('');
+  const [category1, setCategory1] = useState('');
+  const [category2, setCategory2] = useState('');
+  const [supplier, setSupplier] = useState('');
   const didMountRef = useRef(false);
 
   const handleCat1Change = (event) => {
@@ -99,7 +99,7 @@ export default function Chart({ chartData, filterValues, filterChange }) {
   });
 
   return chartData.length > 0 && filterValues.length > 0 ? (
-    <React.Fragment>
+    <Fragment>
       <div className={classes.fullTitle}>
         <Title>Total order volume by day</Title>
         <div>
@@ -198,9 +198,9 @@ export default function Chart({ chartData, filterValues, filterChange }) {
           />
         </LineChart>
       </ResponsiveContainer>
-    </React.Fragment>
+    </Fragment>
   ) : (
-    <Loader />
+    <Spinner />
   );
 }
 

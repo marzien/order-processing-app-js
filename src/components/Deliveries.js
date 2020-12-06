@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, Fragment } from 'react';
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import Title from './Title';
 import PropTypes from 'prop-types';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Loader from './Loader';
+import Spinner from './Spinner';
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -31,11 +31,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Row(props) {
   const { deliveriesByDate } = props;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const classes = useStyles();
 
   return (
-    <React.Fragment>
+    <Fragment>
       <TableRow className={classes.root}>
         <TableCell>
           <IconButton
@@ -83,7 +83,7 @@ function Row(props) {
           </Collapse>
         </TableCell>
       </TableRow>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
@@ -95,7 +95,7 @@ export default function Deliveries({ deliveriesData }) {
   const classes = useStyles();
 
   return deliveriesData.length > 0 ? (
-    <React.Fragment>
+    <Fragment>
       <Title className={classes.seeMore}>Deliveries by day</Title>
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
@@ -106,9 +106,9 @@ export default function Deliveries({ deliveriesData }) {
           </TableBody>
         </Table>
       </TableContainer>
-    </React.Fragment>
+    </Fragment>
   ) : (
-    <Loader />
+    <Spinner />
   );
 }
 
