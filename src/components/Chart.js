@@ -71,8 +71,8 @@ export default function Chart({ chartData, filterValues, filterChange }) {
   const theme = useTheme();
   const classes = useStyles();
 
-  const [category1, setCategory1] = useState('');
-  const [category2, setCategory2] = useState('');
+  const [productCategory1, setCategory1] = useState('');
+  const [productCategory2, setCategory2] = useState('');
   const [supplier, setSupplier] = useState('');
   const didMountRef = useRef(false);
 
@@ -91,9 +91,7 @@ export default function Chart({ chartData, filterValues, filterChange }) {
 
   useEffect(() => {
     if (didMountRef.current) {
-      filterChange(
-        [category1, category2, supplier].filter((cat) => cat !== '')
-      );
+      filterChange({ productCategory1, productCategory2, supplier });
       didMountRef.current = false;
     } else didMountRef.current = true;
   });
@@ -107,7 +105,7 @@ export default function Chart({ chartData, filterValues, filterChange }) {
             <Select
               labelId="category1-label"
               id="category1-select"
-              value={category1}
+              value={productCategory1}
               onChange={handleCat1Change}
               input={<BootstrapInput />}
             >
@@ -125,7 +123,7 @@ export default function Chart({ chartData, filterValues, filterChange }) {
             <Select
               labelId="category2-label"
               id="category2-select"
-              value={category2}
+              value={productCategory2}
               onChange={handleCat2Change}
               input={<BootstrapInput />}
             >

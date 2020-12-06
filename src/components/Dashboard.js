@@ -159,7 +159,7 @@ export default function Dashboard() {
   const [topChartDataType, setChartDataType] = useState('byIncome');
   const [orderVolumeByDayData, setOrderVolumeByDay] = useState([]);
   const [filterValues, setFilterValues] = useState([]);
-  const [filterType, setFilterOptions] = useState([]);
+  const [filterType, setFilterOptions] = useState({});
   const [rankSuppliersData, setSuppliersRank] = useState([]);
   const [deliveriesData, setDeliveries] = useState([]);
 
@@ -183,7 +183,11 @@ export default function Dashboard() {
         setDeliveries(calculateDeliveries(data));
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [
+    filterType.productCategory1,
+    filterType.productCategory2,
+    filterType.supplier,
+  ]);
 
   const calculateProductQuantity = (data) => {
     const productObj = {};
@@ -255,7 +259,6 @@ export default function Dashboard() {
     const orderObj = {};
     const orderVolumeByDayArray = [];
 
-    // TODO track for filter values changes and rerender chart
     function filter(arr, criteria) {
       return arr.filter(function (obj) {
         return Object.keys(criteria).every(function (c) {
@@ -268,11 +271,8 @@ export default function Dashboard() {
       });
     }
 
-    data = filter(data, {
-      productCategory1: '',
-      productCategory2: '',
-      supplier: '',
-    });
+    data = filter(data, filterType);
+    // TODO track when we found no results by filter data
 
     data.map((item) => {
       if (orderObj[item.orderedOn]) {
