@@ -271,37 +271,46 @@ export default function Dashboard() {
       });
     }
 
-    data = filter(data, filterType);
-    // TODO track when we found no results by filter data
+    let filteredData = filter(data, filterType);
 
-    data.map((item) => {
-      if (orderObj[item.orderedOn]) {
-        orderObj[item.orderedOn].quantity += parseInt(item.quantity);
-        orderObj[item.orderedOn].price = parseFloat(
-          item.price.replace(/,/g, '')
-        );
-      } else {
-        orderObj[item.orderedOn] = {
-          quantity: parseInt(item.quantity),
-          price: parseFloat(item.price.replace(/,/g, '')),
-        };
-      }
-      return 0;
-    });
-
-    Object.keys(orderObj).map((item) => {
-      orderVolumeByDayArray.push({
-        orderedOn: item,
-        income: orderObj[item].quantity * orderObj[item].price,
+    // TODO need refactor when where is filtered data
+    const orderVolumeByDay = (selectedData) => {
+      selectedData.map((item) => {
+        if (orderObj[item.orderedOn]) {
+          orderObj[item.orderedOn].quantity += parseInt(item.quantity);
+          orderObj[item.orderedOn].price = parseFloat(
+            item.price.replace(/,/g, '')
+          );
+        } else {
+          orderObj[item.orderedOn] = {
+            quantity: parseInt(item.quantity),
+            price: parseFloat(item.price.replace(/,/g, '')),
+          };
+        }
+        return 0;
       });
-      return 0;
-    });
 
-    return orderVolumeByDayArray.sort((d1, d2) =>
-      moment(d1.orderedOn, dateFormat) > moment(d2.orderedOn, dateFormat)
-        ? 1
-        : -1
-    );
+      Object.keys(orderObj).map((item) => {
+        orderVolumeByDayArray.push({
+          orderedOn: item,
+          income: orderObj[item].quantity * orderObj[item].price,
+        });
+        return 0;
+      });
+
+      return orderVolumeByDayArray.sort((d1, d2) =>
+        moment(d1.orderedOn, dateFormat) > moment(d2.orderedOn, dateFormat)
+          ? 1
+          : -1
+      );
+    };
+
+    if (filteredData.length > 0) {
+      return orderVolumeByDay(filteredData);
+    } else {
+      alert('No results found! Showing all data.');
+      return orderVolumeByDay(data);
+    }
   };
 
   const calculateFilterValues = (data) => {
