@@ -95,7 +95,9 @@ export default function RankChart({ chartData }) {
             labelStyle={{ color: theme.palette.background.default }}
             itemStyle={{ color: theme.palette.background.default }}
             formatter={function (value, name) {
-              return `${value.toFixed(2)}€`;
+              return ` ${
+                name === 'quantity' ? value + 'pcs' : value.toFixed(2) + '€'
+              }`;
             }}
             labelFormatter={function (value) {
               return `Supplier: ${value}`;
